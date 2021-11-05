@@ -13,11 +13,17 @@ class Paddle extends React.Component {
       bottomY: 0,
       rightX: 0,
       topY: 0,
+      xInc: false,
+      yInc: false,
     }
     ret.leftX = this.props.value.coords.x;
     ret.topY = this.props.value.coords.y;
     ret.rightX = ret.leftX + this.paddleRef.offsetWidth;
     ret.bottomY = ret.topY + this.paddleRef.offsetHeight;
+    ret.xInc = this.props.value.coords.xInc;
+    ret.yInc = this.props.value.coords.yInc;
+    //console.log("In paddle func xandY inc: "+ret.inc)
+    //Object.keys(this.props.value.coords).forEach((prop)=> console.log(prop));
     return ret
   }
 

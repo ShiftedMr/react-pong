@@ -29,8 +29,8 @@ class Board extends React.Component {
   }
   componentDidMount() {
     //Access the child component function from here
-    console.log("VIDTH: " +this.childPaddle[1].getObjectCoordsRange());
-    console.log("VIDTH: " +this.childPaddle[2].getObjectCoordsRange());
+    //console.log("VIDTH: " +this.childPaddle[1].getObjectCoordsRange());
+    //console.log("VIDTH: " +this.childPaddle[2].getObjectCoordsRange());
   }
   renderSquare(i) {
     //console.log("renderSquare");

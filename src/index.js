@@ -27,8 +27,6 @@ export default function useWindowDimensions() {
   return windowDimensions;
 }
 
-
-
 /*
 class Ball extends Square{
   constructor(props){
@@ -41,16 +39,15 @@ class Ball extends Square{
   }
 }*/
 
-
 class Game extends React.Component {
   constructor(props){
     super(props);
     this.boardRef= null;
     this.state={
       board: null,
-      ball: {coords : {x:30,y:0,xInc: true,yInc: true}},
-      player1_object: {coords: {x:0, y:0,xInc: true,yInc: true}, name:"player1", score:0, id: 1},
-      player2_object: {coords: {x:1000, y:0,xInc: true,yInc: true}, name:"player2", score:0, id: 2},
+      ball: {coords : {x:150,y:200,xInc: true,yInc: true}},
+      player1_object: {coords: {x:100, y:120,xInc: true,yInc: true}, name:"player1", score:0, id: 1},
+      player2_object: {coords: {x:1000, y:120,xInc: true,yInc: true}, name:"player2", score:0, id: 2},
       //windowdims
       dim: {x:19000, y:19000},
       refs: {ball:null,
@@ -77,7 +74,7 @@ class Game extends React.Component {
     console.log("Clicked");
     const ballLoc = this.state.ball.coords
     this.setState({
-      ball:{coords: {x: ballLoc.x+1, y:ballLoc.y+1}},
+      ball:{coords: {x: ballLoc.x+1, y:ballLoc.y+1, xInc:ballLoc.xInc, yInc:ballLoc.yInc}},
     });
     console.log("current state: x:"+(ballLoc.x+1)+" y:"+(ballLoc.y));
   }
@@ -125,15 +122,17 @@ class Game extends React.Component {
     let ybuffer=140;
     const inc1_amt=3;
     const inc2_amt=2;
-    const incY1 = ((paddle1coords.yInc&&(curY1+ybuffer+inc1_amt)<=maxY)||(!paddle1coords.yInc && (curY1-inc1_amt)<=0));
-    const incY2 = ((paddle2coords.yInc&&(curY2+ybuffer+inc2_amt)<=maxY)||(!paddle2coords.yInc && (curY2-inc2_amt)<=0));
+    const incY1 = ((paddle1coords.yInc&&((curY1+ybuffer+inc1_amt)<=maxY))||(!paddle1coords.yInc && (curY1-inc1_amt)<=120));
+    //console.log("y1Inc calc: isInc?: " + paddle1coords.yInc +" && " + (curY1+ybuffer+inc1_amt) +"<="+maxY+"))||( " + !paddle1coords.yInc +"&& ("+(curY1-inc1_amt)+"<=0));" );
+    const incY2 = ((paddle2coords.yInc&&((curY2+ybuffer+inc2_amt)<=maxY))||(!paddle2coords.yInc && (curY2-inc2_amt)<=120));
+    //console.log("y2Inc calc: isInc?: " + paddle2coords.yInc +" && " + (curY2+ybuffer+inc2_amt) +"<="+maxY+"))||( " + !paddle2coords.yInc +"&& ("+(curY2-inc2_amt)+"<=0));" );
 
     const newY1 = this.state.player1_object.coords.y + (incY1?inc1_amt:0-inc1_amt);
     const newY2 = this.state.player2_object.coords.y + (incY2?inc2_amt:0-inc2_amt);
-    console.log("Player1 moves from: "+ curY1 + "to:" + newY1 +
-                "\nPlayer2 moves from: "+ curY2 + "to:" + newY2+ "\n"+
+    /*console.log("Player1 moves from: "+ curY1 + "to:" + newY1 + "because yinc1 set to: " + incY1 + "\n"+
+                "Player2 moves from: "+ curY2 + "to:" + newY2 + "because yinc2 set to: " + incY2 + "\n"+
                 "maxY: "+maxY+ "p1 math " +(curY1+ybuffer+inc1_amt) + "<= " +maxY+"\n"+
-                "maxY: "+maxY+ "p2 math " +(curY2+ybuffer+inc2_amt) + "<= " +maxY)
+                "maxY: "+maxY+ "p2 math " +(curY2+ybuffer+inc2_amt) + "<= " +maxY)*/
     stateobj.player1_object.coords.y=newY1;
     stateobj.player1_object.coords.yInc=incY1;
     stateobj.player2_object.coords.y=newY2;
@@ -151,22 +150,23 @@ class Game extends React.Component {
     const ballRef = this.boardRef.getBall();
     const paddles = this.boardRef.getPaddles();
     const ballCoords = ballRef.getObjectCoordsRange();
+    console.log(ballCoords)
     //Check topLeft Ball collision with left paddle
     const collLeftPadBallTopL = this.checkForCollision(paddles[1],{x: ballCoords.leftX, y: ballCoords.topY});
     //Check topRight Ball collision with left paddle
-    const collLeftPadBallTopR = this.checkForCollision(paddles[1],{x: ballCoords.leftX, y: ballCoords.topY});
+    const collLeftPadBallTopR = this.checkForCollision(paddles[1],{x: ballCoords.rightX, y: ballCoords.topY});
     //Check botLeft Ball collision with left paddle
-    const collLeftPadBallBotL = this.checkForCollision(paddles[1],{x: ballCoords.leftX, y: ballCoords.topY});
+    const collLeftPadBallBotL = this.checkForCollision(paddles[1],{x: ballCoords.leftX, y: ballCoords.bottomY});
     //Check botRight Ball collision with left paddle
-    const collLeftPadBallBotR = this.checkForCollision(paddles[1],{x: ballCoords.leftX, y: ballCoords.topY});
+    const collLeftPadBallBotR = this.checkForCollision(paddles[1],{x: ballCoords.rightX, y: ballCoords.bottomY});
     //Check topLeft Ball collision with right paddle
     const collRightPadBallTopL = this.checkForCollision(paddles[2],{x: ballCoords.leftX, y: ballCoords.topY});
     //Check topRight Ball collision with right paddle
-    const collRightPadBallTopR = this.checkForCollision(paddles[2],{x: ballCoords.leftX, y: ballCoords.topY});
+    const collRightPadBallTopR = this.checkForCollision(paddles[2],{x: ballCoords.rightX, y: ballCoords.topY});
     //Check botLeft Ball collision with right paddle
-    const collRightPadBallBotL = this.checkForCollision(paddles[2],{x: ballCoords.leftX, y: ballCoords.topY});
+    const collRightPadBallBotL = this.checkForCollision(paddles[2],{x: ballCoords.leftX, y: ballCoords.bottomY});
     //Check botRight Ball collision with right paddle
-    const collRightPadBallBotR = this.checkForCollision(paddles[2],{x: ballCoords.leftX, y: ballCoords.topY});
+    const collRightPadBallBotR = this.checkForCollision(paddles[2],{x: ballCoords.rightX, y: ballCoords.bottomY});
     const oneCorner=false;
     const curX = this.state.ball.coords.x;
     const curY = this.state.ball.coords.y;
@@ -180,14 +180,30 @@ class Game extends React.Component {
       (collLeftPadBallTopR) ||
       (collLeftPadBallTopL) ||
       (collLeftPadBallBotL))
-    const xInc = (       !( this.state.ball.coords.xInc && curX >= maxX ) && (
-      ( this.state.ball.coords.xInc && curX < maxX ) ||
-      (!this.state.ball.coords.xInc && curX<=0)||
-      (this.state.ball.coords.xInc&&!rightPaddleCollison) ||
+    const wallLeftCollision = (ballCoords.leftX <= 0 );
+    const wallRightCollision = (ballCoords.rightX >= maxX);
+    /* Collision Checks */
+    let xInc=ballCoords.xInc;
+    let yInc=ballCoords.yInc;
+    if(rightPaddleCollison||wallRightCollision){
+      console.log("Bools for right paddle collision: " +collRightPadBallBotR+ "" +collRightPadBallTopR+ "" +collRightPadBallTopL+ "" +collRightPadBallBotL+ "");
+      xInc=false;
+    }
+    if(leftPaddleCollision||wallLeftCollision){
+      console.log("Bools for left paddle collision: " +collLeftPadBallBotR+ "" +collLeftPadBallTopR+ "" +collLeftPadBallTopL+ "" +collLeftPadBallBotL+ "");
+      xInc=true;
+    }
+    if(wallLeftCollision || wallRightCollision){
+      console.log("Left wall hit: "+wallLeftCollision+ " Right wall hit: "+wallRightCollision);
+    }
+
+   /*const xInc = (!(this.state.ball.coords.xInc && curX <= 0 ) && !(this.state.ball.coords.xInc && curX >= maxX ) || (
+      (this.state.ball.coords.xInc && curX < maxX && curX>=0) &&
+      (this.state.ball.coords.xInc&&!rightPaddleCollison) &&
       (!this.state.ball.coords.xInc&&leftPaddleCollision)));
     const yInc = (
       ( this.state.ball.coords.yInc && curY < maxY ) ||
-      (!this.state.ball.coords.yInc && curY<=0));
+      (!this.state.ball.coords.yInc && curY<=0));*/
     // console.log(
     //   "MaxX: " + maxX +
     //   "\nMaxY: " + maxY +
@@ -196,8 +212,8 @@ class Game extends React.Component {
     //   "\nxInc: " + xInc +
     //   "\nyInc: " + yInc 
     // );
-    const newX = this.state.ball.coords.x + (xInc?1:-1);
-    const newY = this.state.ball.coords.y + (yInc?1:-1);
+    const newX = this.state.ball.coords.x + (xInc?3:-3);
+    const newY = this.state.ball.coords.y + (yInc?0:0);
     stateobj.ball.coords.x = newX;
     stateobj.ball.coords.y = newY;
     stateobj.ball.coords.xInc = xInc;
